@@ -14,9 +14,10 @@ import java.util.List;
 public class PropertyController {
     @Autowired
     BaseService propertyService;
-    @GetMapping("/hello")
-    public String hello(){
-        return "helloo varun";
+
+    @GetMapping("/")
+    public String welcome(){
+        return "welcome to my new page";
     }
 
     @PostMapping("/properties")
