@@ -2,6 +2,7 @@ package com.properties.propertyManagementsystem.services.propertyservice;
 
 import com.properties.propertyManagementsystem.dto.PropertyDTO;
 import com.properties.propertyManagementsystem.entity.PropertyEntity;
+import com.properties.propertyManagementsystem.entity.UserEntity;
 import com.properties.propertyManagementsystem.exception.AppException;
 import com.properties.propertyManagementsystem.exception.ErrorClass;
 import com.properties.propertyManagementsystem.repository.PropertyRepository;
@@ -97,4 +98,5 @@ public class PropertyService implements BaseService {
         }
         return pe;
     }
+
 }
