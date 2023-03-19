@@ -1,9 +1,11 @@
 package com.properties.propertyManagementsystem.services.propertyservice;
 
 import com.properties.propertyManagementsystem.dto.UserDTO;
+import com.properties.propertyManagementsystem.entity.AddressEntity;
 import com.properties.propertyManagementsystem.entity.UserEntity;
 import com.properties.propertyManagementsystem.exception.AppException;
 import com.properties.propertyManagementsystem.exception.ErrorClass;
+import com.properties.propertyManagementsystem.repository.AddressRepository;
 import com.properties.propertyManagementsystem.repository.UserRepository;
 import com.properties.propertyManagementsystem.services.UserBaseService;
 import com.properties.propertyManagementsystem.services.converter.UserConverter;
@@ -19,6 +21,9 @@ public class UserService implements UserBaseService {
 
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private AddressRepository addressRepo;
 
     @Autowired
     private UserConverter converter;
@@ -49,8 +54,15 @@ public class UserService implements UserBaseService {
             errors.add(err);
             throw new AppException(errors);
         }
-        UserEntity newUser=converter.dtoToEntity(userdto);
-        userRepo.save(newUser);
+        List<Object> arr=converter.dtoToEntity(userdto);
+        userRepo.save((UserEntity) arr.get(0));
+        addressRepo.save((AddressEntity) arr.get(1));
        return userdto;
     }
+
+    @Override
+    public AddressEntity address(Long id){
+        return addressRepo.findByUserEntityId(id);
+    }
+
 }

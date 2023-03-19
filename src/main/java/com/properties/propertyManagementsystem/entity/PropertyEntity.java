@@ -21,4 +21,7 @@ public class PropertyEntity {
     @Column(name="EMAIL", nullable = false)
     private String ownerMail;
     private String ownerName;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="USER_ID", nullable = false)
+    private UserEntity userEntity;
 }

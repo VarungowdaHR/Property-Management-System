@@ -6,7 +6,8 @@ import com.properties.propertyManagementsystem.entity.UserEntity;
 import com.properties.propertyManagementsystem.exception.AppException;
 import com.properties.propertyManagementsystem.exception.ErrorClass;
 import com.properties.propertyManagementsystem.repository.PropertyRepository;
-import com.properties.propertyManagementsystem.services.BaseService;
+import com.properties.propertyManagementsystem.repository.UserRepository;
+import com.properties.propertyManagementsystem.services.PropertyBaseService;
 import com.properties.propertyManagementsystem.services.converter.PropertyConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,32 +17,45 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PropertyService implements BaseService {
+public class PropertyServiceProperty implements PropertyBaseService {
     @Autowired
-    PropertyRepository propertyrepo;
+    PropertyRepository propertyRepo;
+
+    @Autowired
+    UserRepository userEntityRepo;
     @Autowired
     PropertyConverter converter;
     @Override
     public PropertyEntity saveRepo(PropertyDTO propertydto) {
-        PropertyEntity newEntity=converter.dtoToEntityConverter(propertydto);
-        propertyrepo.save(newEntity);
-        return newEntity;
+        Optional<UserEntity> ue=userEntityRepo.findById(propertydto.getUserId());
+        if(ue.isPresent()){
+            PropertyEntity newEntity=converter.dtoToEntityConverter(propertydto);
+            newEntity.setUserEntity(ue.get());
+            propertyRepo.save(newEntity);
+            return newEntity;
+        }
+        ErrorClass ec=new ErrorClass();
+        ec.setCode("USER_NOT_REGISTERED");
+        ec.setMessage("Please register to continue..");
+        ArrayList<ErrorClass> errors=new ArrayList<>();
+        errors.add(ec);
+        throw new AppException(errors);
     }
 
     @Override
     public List<PropertyEntity> listAllRepo() {
-       return (List<PropertyEntity>) propertyrepo.findAll();
+       return (List<PropertyEntity>) propertyRepo.findAll();
     }
 
     @Override
     public void deleteByIdREPO(Long id) {
-        propertyrepo.deleteById(id);
+        propertyRepo.deleteById(id);
     }
 
     @Override
     public PropertyEntity update(PropertyDTO propertydto, Long id) {
         PropertyEntity pe=null;
-        Optional<PropertyEntity>  replaceEntity = propertyrepo.findById(id);
+        Optional<PropertyEntity>  replaceEntity = propertyRepo.findById(id);
         if(replaceEntity.isPresent()){
             pe=replaceEntity.get();
             pe.setOwnerName(propertydto.getOwnerName());
@@ -49,7 +63,7 @@ public class PropertyService implements BaseService {
             pe.setCost(propertydto.getCost());
             pe.setDescription(propertydto.getDescription());
             pe.setOwnerMail(propertydto.getOwnerMail());
-            propertyrepo.save(pe);
+            propertyRepo.save(pe);
         }else{
             List<ErrorClass> errors=new ArrayList<>();
             ErrorClass ec=new ErrorClass();
@@ -64,11 +78,11 @@ public class PropertyService implements BaseService {
     @Override
     public PropertyEntity updateName(Long id, String name) {
         PropertyEntity pe=null;
-        Optional<PropertyEntity> optpe=propertyrepo.findById(id);
+        Optional<PropertyEntity> optpe= propertyRepo.findById(id);
         if(optpe.isPresent()){
             pe=optpe.get();
             pe.setOwnerName(name);
-            propertyrepo.save(pe);
+            propertyRepo.save(pe);
         }else{
             List<ErrorClass> errors=new ArrayList<>();
             ErrorClass ec=new ErrorClass();
@@ -83,11 +97,11 @@ public class PropertyService implements BaseService {
     @Override
     public PropertyEntity updateCost(Long id, double cost) {
         PropertyEntity pe=null;
-        Optional<PropertyEntity> optpe=propertyrepo.findById(id);
+        Optional<PropertyEntity> optpe= propertyRepo.findById(id);
         if(optpe.isPresent()){
             pe=optpe.get();
             pe.setCost(cost);
-            propertyrepo.save(pe);
+            propertyRepo.save(pe);
         }else{
             List<ErrorClass> errors=new ArrayList<>();
             ErrorClass ec=new ErrorClass();
@@ -97,6 +111,10 @@ public class PropertyService implements BaseService {
             throw new AppException(errors);
         }
         return pe;
+    }
+    @Override
+    public List<PropertyEntity> getUserProperties(Long id){
+        return propertyRepo.findAllByUserEntityId(id);
     }
 
 }

@@ -2,7 +2,8 @@ package com.properties.propertyManagementsystem.controller;
 
 import com.properties.propertyManagementsystem.dto.PropertyDTO;
 import com.properties.propertyManagementsystem.entity.PropertyEntity;
-import com.properties.propertyManagementsystem.services.BaseService;
+import com.properties.propertyManagementsystem.services.PropertyBaseService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class PropertyController {
     @Autowired
-    BaseService propertyService;
+    PropertyBaseService propertyService;
 
     @GetMapping("/")
     public String welcome(){
@@ -21,7 +22,7 @@ public class PropertyController {
     }
 
     @PostMapping("/properties")
-    public  ResponseEntity<PropertyEntity> save(@RequestBody PropertyDTO propertydto){
+    public  ResponseEntity<PropertyEntity> save(@Valid @RequestBody PropertyDTO propertydto){
         PropertyEntity savedEntity=propertyService.saveRepo(propertydto);
         return new ResponseEntity<>(savedEntity, HttpStatus.CREATED);
     }
@@ -50,6 +51,11 @@ public class PropertyController {
     public  ResponseEntity<PropertyEntity> updateCost(@PathVariable Long id, @RequestParam Double cost){
         PropertyEntity updatedCost= propertyService.updateCost(id, cost);
         return new ResponseEntity<>(updatedCost, HttpStatus.CREATED);
+    }
+    @GetMapping("/properties/user/{userId}")
+    public ResponseEntity<List<PropertyEntity>> findAll(@PathVariable Long userId){
+        List<PropertyEntity> responce=propertyService.getUserProperties(userId);
+        return new ResponseEntity<>(responce, HttpStatus.OK);
     }
 
 }
