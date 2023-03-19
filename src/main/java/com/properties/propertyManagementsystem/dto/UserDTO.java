@@ -2,6 +2,7 @@ package com.properties.propertyManagementsystem.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,11 +24,21 @@ public class UserDTO {
     @NotEmpty(message="password cannot be empty")
     private String password;
     private Long Contact;
+    @NotNull(message = "email is required")
+    @NotEmpty(message="email cannot be empty")
     private String email;
+
     private String homeTown;
+
     private String City;
-    private int pinCode;
+    @NotNull(message = "pincode is required")
+    @Digits(integer = 6, fraction = 0, message = "pincode must be an integer and should contain six digits")
+    private Integer pinCode;
+    @NotNull(message = "state is required")
+    @NotEmpty(message="state cannot be empty")
     private String state;
+    @NotNull(message = "country is required")
+    @NotEmpty(message="country cannot be empty")
     private String country;
 }
 
