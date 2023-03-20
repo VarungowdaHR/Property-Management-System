@@ -40,9 +40,4 @@
         </root>
     </springProfile>
 
-    <springProfile name="test | acc | prod">
-        <root level="WARN">
-            <appender-ref ref="FILE-ROLLING" />
-        </root>
-    </springProfile>
 </configuration>
